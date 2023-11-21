@@ -70,60 +70,63 @@ namespace SimplePictureCapture
                         // capture the photo asynchronously
                         Uri texture = await world.Render.RenderToAsset(renderSettings, fmt, qual);
 
-                        // spawn the photo object :)
-                        var photo = cam.LocalUserSpace.AddSlot("Photo in " + world.Name);
-                        var tex = photo.AttachTexture(texture);
-
-                        // Last argument is FALSE! this is because we attach metadata manually
-                        ImageImporter.SetupTextureProxyComponents(photo, tex, StereoLayout.None, ImageProjection.Perspective, false);
-
-                        PhotoMetadata meta = photo.AttachComponent<PhotoMetadata>();
-
-                        // manually assign all the metadata, since its in a different world
-                        SetupMetadataFromWorld(meta, world);
-
-                        meta.Is360.Value = false;
-                        meta.StereoLayout.Value = StereoLayout.None;
-
-                        meta.CameraManufacturer.Value = "art0007i"; // :)
-                        meta.CameraModel.Value = "SimplePictureCapture Mod";
-                        meta.CameraFOV.Value = cam.FieldOfView;
-
-                        // attach grabbable, mesh, and box collider
-                        photo.AttachComponent<Grabbable>().Scalable.Value = true;
-
-                        var model = photo.AttachMesh<QuadMesh, UnlitMaterial>();
-                        model.material.Texture.Target = tex;
-                        model.material.Sidedness.Value = Sidedness.Double;
-                        var textureSizeDriver = photo.AttachComponent<TextureSizeDriver>();
-                        textureSizeDriver.Texture.Target = tex;
-                        textureSizeDriver.DriveMode.Value = TextureSizeDriver.Mode.Normalized;
-                        textureSizeDriver.Target.Target = model.mesh.Size;
-                        BoxCollider coll = photo.AttachComponent<BoxCollider>();
-                        coll.Size.DriveFromXY(model.mesh.Size);
-                        coll.Type.Value = ColliderType.NoCollision;
-
-                        // position the picture, the idea is we use first thing of exclude render as the pic root, its actually smart trust me
-                        var first = cam.IsRemoved ? null : cam.ExcludeRender.FirstOrDefault();
-                        var shouldDelete = first == null;
-                        if (!shouldDelete)
+                        cam.RunSynchronously(async () =>
                         {
-                            var vec = first.ChildrenCount * new float3(0, 0, 0.05f);
-                            photo.Parent = first;
-                            photo.LocalPosition = vec;
-                            photo.LocalRotation = floatQ.Identity;
-                            photo.LocalScale = float3.One;
-                        }
-                        else
-                        {
-                            photo.LocalPosition = new float3(0f, -10000f);
-                        }
+                            // spawn the photo object :)
+                            var photo = cam.LocalUserSpace.AddSlot("Photo in " + world.Name);
+                            var tex = photo.AttachTexture(texture);
 
-                        await meta.NotifyOfScreenshot();
-                        if (shouldDelete)
-                        {
-                            photo.Destroy();
-                        }
+                            // Last argument is FALSE! this is because we attach metadata manually
+                            ImageImporter.SetupTextureProxyComponents(photo, tex, StereoLayout.None, ImageProjection.Perspective, false);
+
+                            PhotoMetadata meta = photo.AttachComponent<PhotoMetadata>();
+
+                            // manually assign all the metadata, since its in a different world
+                            SetupMetadataFromWorld(meta, world);
+
+                            meta.Is360.Value = false;
+                            meta.StereoLayout.Value = StereoLayout.None;
+
+                            meta.CameraManufacturer.Value = "art0007i"; // :)
+                            meta.CameraModel.Value = "SimplePictureCapture Mod";
+                            meta.CameraFOV.Value = cam.FieldOfView;
+
+                            // attach grabbable, mesh, and box collider
+                            photo.AttachComponent<Grabbable>().Scalable.Value = true;
+
+                            var model = photo.AttachMesh<QuadMesh, UnlitMaterial>();
+                            model.material.Texture.Target = tex;
+                            model.material.Sidedness.Value = Sidedness.Double;
+                            var textureSizeDriver = photo.AttachComponent<TextureSizeDriver>();
+                            textureSizeDriver.Texture.Target = tex;
+                            textureSizeDriver.DriveMode.Value = TextureSizeDriver.Mode.Normalized;
+                            textureSizeDriver.Target.Target = model.mesh.Size;
+                            BoxCollider coll = photo.AttachComponent<BoxCollider>();
+                            coll.Size.DriveFromXY(model.mesh.Size);
+                            coll.Type.Value = ColliderType.NoCollision;
+
+                            // position the picture, the idea is we use first thing of exclude render as the pic root, its actually smart trust me
+                            var first = cam.IsRemoved ? null : cam.ExcludeRender.FirstOrDefault();
+                            var shouldDelete = first == null;
+                            if (!shouldDelete)
+                            {
+                                var vec = first.ChildrenCount * new float3(0, 0, 0.05f);
+                                photo.Parent = first;
+                                photo.LocalPosition = vec;
+                                photo.LocalRotation = floatQ.Identity;
+                                photo.LocalScale = float3.One;
+                            }
+                            else
+                            {
+                                photo.LocalPosition = new float3(0f, -10000f);
+                            }
+
+                            await meta.NotifyOfScreenshot();
+                            if (shouldDelete)
+                            {
+                                photo.Destroy();
+                            }
+                        });
 
                         if (texture != null)
                         {
