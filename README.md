@@ -1,6 +1,10 @@
 # SimplePictureCapture
 
-A [ResoniteModLoader](https://github.com/resonite-modding-group/ResoniteModLoader) mod for [Resonite](https://resonite.com/) that does x.
+A [ResoniteModLoader](https://github.com/resonite-modding-group/ResoniteModLoader) mod for [Resonite](https://resonite.com/) that adds a way to take pictures that go into the screenshots folder from ProtoFlux.
+
+To use this just put a comment component with the text `me.art0007i.SimplePictureCapture` on the same slot as the camera. Then use the `RenderToTextureAsset` ProtoFlux node on that camera.
+
+Additionally this mod will parent the taken pictures under the first slot of the `ExcludeRender` list of the camera. (If the ExcludeRender list is empty, or the first element is null, this feature will be disabled)
 
 ## Installation
 1. Install [ResoniteModLoader](https://github.com/resonite-modding-group/ResoniteModLoader).
