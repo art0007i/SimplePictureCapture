@@ -12,8 +12,6 @@ using Elements.Core;
 using ProtoFlux.Core;
 using FrooxEngine.ProtoFlux;
 using ProtoFlux.Runtimes.Execution;
-using static FrooxEngine.AssetMetadata;
-using System.Security.Policy;
 
 namespace SimplePictureCapture
 {
