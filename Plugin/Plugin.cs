@@ -124,7 +124,7 @@ public class Plugin : BasePlugin
                             photo.LocalPosition = new float3(0f, -10000f);
                         }
 
-                        await meta.NotifyOfScreenshot();
+                        await meta.Export();
                         if (shouldDelete)
                         {
                             photo.Destroy();
