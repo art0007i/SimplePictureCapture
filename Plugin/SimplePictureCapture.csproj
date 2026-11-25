@@ -21,7 +21,7 @@
 
     <PluginsDir>$(GamePath)BepInEx/plugins/</PluginsDir>
     <PluginTargetDir>$(PluginsDir)$(Authors)-$(AssemblyName)/$(AssemblyName)/</PluginTargetDir>
-    <CopyToPlugins>true</CopyToPlugins>
+    <CopyToPlugins>false</CopyToPlugins>
   </PropertyGroup>
 
   <!-- Modding dependencies -->
